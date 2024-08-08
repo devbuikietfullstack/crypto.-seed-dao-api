@@ -7,11 +7,13 @@ import {
   Default,
   CreatedAt,
   HasMany,
+  HasOne,
 } from 'sequelize-typescript';
-import { login_bonus } from './login_bonus.entity';
+import { LoginBonus } from './LoginBonus.entity';
+import { RefreshToken } from './RefreshToken.entity';
 
 @Table
-export class user extends Model {
+export class User extends Model {
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column({ unique: true, allowNull: false })
@@ -19,19 +21,19 @@ export class user extends Model {
 
   @Column({
     allowNull: false,
-    type: DataType.CHAR(50),
+    type: DataType.STRING,
   })
   username: string;
 
   @Column({
     allowNull: true,
-    type: DataType.CHAR(50),
+    type: DataType.STRING,
   })
   first_name: string;
 
   @Column({
     allowNull: true,
-    type: DataType.CHAR(50),
+    type: DataType.STRING,
   })
   last_name: string;
 
@@ -44,10 +46,12 @@ export class user extends Model {
 
   @Column({
     allowNull: false,
-    type: DataType.CHAR(50),
+    unique: true,
+    type: DataType.STRING,
   })
   telegram_id: string;
 
+  @Default(null)
   @Column({
     allowNull: true,
     type: DataType.DATE,
@@ -56,13 +60,13 @@ export class user extends Model {
 
   @Column({
     allowNull: false,
-    type: DataType.CHAR(6),
+    type: DataType.STRING,
   })
   invite_id: string;
 
   @Column({
     allowNull: true,
-    type: DataType.CHAR(6),
+    type: DataType.STRING,
   })
   referrer_id: string;
 
@@ -70,6 +74,9 @@ export class user extends Model {
   @Column({ field: 'created_at' })
   createdAt: Date;
 
-  @HasMany(() => login_bonus)
-  login_bonus: login_bonus[];
+  @HasMany(() => LoginBonus)
+  login_bonus: LoginBonus[];
+
+  @HasOne(() => RefreshToken)
+  freshToken: RefreshToken;
 }

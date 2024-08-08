@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './app/auth/auth.module';
 import { DatabaseModule } from './database/database.module';
+import { CheckInitDataMiddleware } from './middlewares/checkInitDataTelegram.middleware';
+import { UserModule } from './app/user/user.module';
 
 @Module({
   imports: [
@@ -11,10 +13,15 @@ import { DatabaseModule } from './database/database.module';
       envFilePath: '.development.env',
       isGlobal: true,
     }),
-    AuthModule,
     DatabaseModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CheckInitDataMiddleware).forRoutes('/');
+  }
+}
